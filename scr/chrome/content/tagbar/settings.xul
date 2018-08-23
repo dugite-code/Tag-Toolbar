@@ -1,0 +1,238 @@
+<?xml version="1.0"?>
+
+<?xml-stylesheet href="chrome://communicator/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://messenger/skin/prefPanels.css" type="text/css"?>
+<?xml-stylesheet href="chrome://communicator/skin/pref/pref.css" type="text/css"?>
+<!DOCTYPE overlay [
+<!ENTITY % tagbarDTD SYSTEM "chrome://tagbar/locale/ttb_catset.dtd">
+%tagbarDTD;
+<!ENTITY % messengerDTD SYSTEM "chrome://messenger/locale/messenger.dtd" >
+%messengerDTD;
+]>
+
+<dialog xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+  buttons="accept, cancel"
+  title="&tagbar.set_title;"
+  id="ttb-settings"
+  flex="1"
+  onload="initTTBSetting();"
+  ondialogaccept="return gTTBSetting.savePrefs();"
+  ondialogcancel="return gTTBSetting.cancelPrefs();"
+  style="width:40em;min-height:382px;"
+  persist="screenX screenY">
+  <script type="application/x-javascript" src="chrome://messenger/content/mailCore.js"/>
+  <script type="application/x-javascript" src="chrome://tagbar/content/utils.js"/>
+  <script type="application/x-javascript" src="chrome://tagbar/content/catmgr.js"/>
+  <script type="application/x-javascript" src="chrome://tagbar/content/tagSearcher.js"/>
+ 	<script type="application/x-javascript" src="chrome://tagbar/content/cssmgr.js"/>
+  <script type="application/x-javascript" src="chrome://tagbar/content/settings.js"/>
+ 	 
+  <stringbundleset id="stringbundleset">
+	<stringbundle id="TTBCatSetBundle"
+	  src="chrome://tagbar/locale/ttb_catset.properties"/>
+  </stringbundleset>
+
+  <tabbox flex="1">
+	<tabs id="tabs">
+	  <tab id="settab" label="&tagbar.optset_title;"/>
+	  <tab id="cattab" label="&tagbar.catset_title;"/>
+	  <tab id="impttab" label="&tagbar.optset_import_title;"/>
+	</tabs>
+	<tabpanels flex="1">
+	  <tabpanel>
+	  	<vbox flex="1">
+	  		<groupbox>
+	  			<caption label="General"/>
+		  		<hbox align="center">
+						<label value="&tagbar.optset_toolbar_num;"/>	  		
+						<textbox id="TTBMaxNum" size="2" multiline="false"
+						  prefstring="ttb.max_toolbars" defaultpref="1"
+						  onblur="gTTBSetting.verifyTextBoxForNum(this)" preftype="int"
+						  />
+					</hbox>
+		  		<hbox align="center">
+		  			<hbox align="center" flex="1">
+						<label value="&tagbar.optset_recent_max;"/>	  		
+						<textbox id="TTBMaxRecentNum" size="2" multiline="false"
+						  prefstring="ttb.max_recent_tags" defaultpref="5"
+						  onblur="gTTBSetting.verifyTextBoxForNum(this)" preftype="int"
+						  />
+						</hbox>
+						<button label="&tagbar.optset_recent_clear;" oncommand='gTTBSetting.clearPref("ttb.recent_tags")'/>
+					</hbox>
+			  	<checkbox id="TTBAlwaysSmallIcon" label="Always show small icons in Tag Toolbar" checked="true"
+			  					 prefstring="ttb.always_show_small_icons" defaultpref="true"/>
+			  </groupbox>
+ 			  <groupbox>
+			  	<caption label="Message reading"/>
+			  	<checkbox id="TTBHideTagsHdr" label="Hide tags row in header view" checked="false"
+			  					 prefstring="ttb.hide_tags_hdr" defaultpref="false"/>
+					<checkbox id="TTBRemCat" checked="true" prefstring="ttb.remember_cat" defaultpref="true"
+							  label="&tagbar.optset_remcat;"/>
+			  </groupbox>
+			  <groupbox>
+			  	<caption label="Message composing"/>
+			  	<checkbox id="TTBCompReproduce" label="Add the same tags the original message has" checked="true"
+			  					 prefstring="ttb.compose_reproduce_orig_tags" defaultpref="true"/>
+			  </groupbox>
+ 			  <groupbox>
+			  	<caption label="Thread pane style"/>
+			  	<checkbox id="TTBThreadStyle" label="Change background colors of tagged messages (need restart)" checked="true"
+			  						oncommand="gTTBSetting.showColorSample(null);"
+			  						prefstring="ttb.thread_bgcolor.enabled" defaultpref="false"/>
+		  			<hbox align="center">
+		  				<spacer style="width:2em;"/>
+		  				<vbox>
+			  		<groupbox align="center" orient="horizontal">
+			  			<caption label="Lightness"/>
+							<scale id="TTBThreadStyleScale" min="0" max="100" flex="1"
+								 pageincrement="25" increment="1"
+								 onchange="gTTBSetting.showColorSample(event.target.value/100.0);"
+								 />
+  					  <textbox id="TTBThreadStyleText" value="" type="number" min="0" max="100" size="4" multiline="false"
+  							 oninput="gTTBSetting.showColorSample(event.target.value/100.0);" 
+  							 oncommand="gTTBSetting.showColorSample(event.target.value/100.0);"/>
+  						<label value="%"/>
+			  		 </groupbox>
+			  	<groupbox>
+			  	<caption label="Text color"/>
+			 	<menulist id="TTBThreadFgStyle" value="0" oncommand="gTTBSetting.showColorSample(null);"
+			 						preftype="int" prefstring="ttb.thread_fgcolor" defaultpref="0">
+	  			<menupopup>
+	  				<menuitem value="0" label="Tag colors"/>
+	  				<menuitem value="1" label="Black/White"/>
+	  				<menuitem value="2" label="Complementary colors"/>
+	  			</menupopup>
+				</menulist>
+				</groupbox>	
+				</vbox>
+				  	<groupbox flex="1">
+				  		<caption label="Preview"/>
+				  	<listbox id="TTBThreadStyleLightness" value="" rows="5" disabled="true"  style="background-color:white !important;"
+				  						 preftype="string" prefstring="ttb.thread_bgcolor.lightness" defaultpref="0.75" flex="1">
+			  		</listbox>
+			  		</groupbox>
+			  		</hbox>
+			  </groupbox>
+				<vbox align="right">
+					<button label="&tagbar.set_default;"
+							  	oncommand="gTTBSetting.defaultOpt()"/>
+			  </vbox>
+	  	</vbox>
+	  </tabpanel>
+	  <tabpanel>
+		<vbox flex="1"> 
+  <hbox align="center">
+	<label value="&tagbar.catset_cat; "/>
+	<menulist id="TTBCatList" flex="1" tagcats="" editable="true" disableautoselect="false"
+	  prefstring="ttb.cats" defaultpref="" style="min-width:14em;">
+	  <menupopup onpopupshowing="gTTBSetting.setValueToCatMenuList()"
+		oncommand="gTTBSetting.initTagList(event.target.value)"
+		/>
+	</menulist>
+	<button id="TTBCatNew" label="&tagbar.catset_newcat;" align="stretch"
+	  oncommand="gTTBSetting.setValueToCatMenuList();gTTBSetting.makeNewCat();"/>
+	<button id="TTBCatDel" label="&tagbar.catset_delcat;" align="stretch"
+	  oncommand="gTTBSetting.deleteSelectedCat();"/>
+	<button id="TTBCatOrder" align="stretch"
+	  oncommand="gTTBSetting.editCatOrder();"/>
+  </hbox>
+  <groupbox>
+	<hbox id="TTBTagsListBox" align="center">
+	  <vbox id="TTBTagListBox" flex="1">
+		<label id="TTBTagListLabel" value ="&tagbar.catset_taglist_in_cat;"/>
+		<listbox id="TTBTagList" flex="1" rows="12" value="" seltype="multiple">
+			<listhead>
+				<!-- temporaly use string for folder pane -->
+			  <listheader id="TTBTagListHeader" label="Tag" flex="1" onclick="gTTBSetting.sortInAlphabeticalOrder(this)"
+			  						oncommand="gTTBSetting.sortInAlphabeticalOrder(this)"/>
+			</listhead>
+		  <listitem label="dummy"/> <!-- dummy -->
+		</listbox>
+		<hbox id="TTBTagFilterBox">
+			<textbox id="TTBTagFilter" value="" flex="1" 
+					 tooltiptext="&tagbar.catset_searchtip;"/>
+			<button label="&tagbar.catset_select;" oncommand='gTTBSetting.filterTags("TTBTagList", "TTBTagFilter")'
+					tooltiptext="&tagbar.catset_searchtip;"/>
+		</hbox>
+	  </vbox>
+	  <vbox id="TTBButtonBox">
+		<button id="TTBIn" label="&lt;--" oncommand="gTTBSetting.addTagsToCat()"/>
+		<button id="TTBOut" label="--&gt;" oncommand="gTTBSetting.removeTagsFromCat()"/>
+		<spacer style="height:0.5em;"/>
+		<button label="&tagbar.catset_taglist_up;" oncommand="gTTBSetting.upTagsInCat()"/>
+		<button label="&tagbar.catset_taglist_down;" oncommand="gTTBSetting.downTagsInCat()"/>
+		<button id="TTBReOrder" label="&tagbar.catset_taglist_reorder;" oncommand="gTTBSetting.resetOrder()"/>
+		<spacer style="height:0.5em;"/>
+		<button id="TTBEditTags" label="&tagbar.catset_edit_tags;" 
+		  oncommand='gTTBSetting.editTags();'/>
+	  </vbox>
+	  <vbox id="TTBList2Box" flex="1">
+		<label id="TTBTagListLabel2" value ="&tagbar.catset_taglist_not_in_cat;"/>
+		<listbox id="TTBTagList2" flex="1" rows="12" seltype="multiple">
+			<listhead disabled="true">
+			  <listheader label="Tag" flex="1" disabled="true"/>
+			</listhead>
+		  <listitem label="dummy"/> <!-- dummy -->
+		</listbox>
+		<hbox id="TTBTagFilterBox2">
+			<textbox id="TTBTagFilter2" value="" flex="1"
+					 tooltiptext="&tagbar.catset_searchtip;"/>
+			<button label="&tagbar.catset_select;" oncommand='gTTBSetting.filterTags("TTBTagList2", "TTBTagFilter2")'
+					tooltiptext="&tagbar.catset_searchtip;"/>
+		</hbox>
+	  </vbox>
+	</hbox>
+  </groupbox>
+  </vbox>
+  </tabpanel>
+  <tabpanel orient="vertical">
+  	<groupbox>
+	 		<caption label="&tagbar.optset_import_cap;"/>
+	 		<spacer style="height:0.5em"/>
+	 		<label value="&tagbar.optset_import_from;"/>
+  	  <radiogroup id="TTBProfilePathRadio">
+       	<grid>
+          <columns>
+          	<column/>
+            <column/>
+            <column flex="1"/>
+          </columns>
+          <rows>
+            <row align="center">
+            	<spacer style="width:1em;"/>
+              <radio id="TTBProfilePathAuto" 
+                     value="TTBProfileList" label="&tagbar.optset_import_profile;"
+                     oncommand=""/>
+	     	  		<menulist id="TTBProfileList" oncommand=""/>
+            </row> 
+            <row align="center">
+	            <spacer style="width:1em;"/>
+	            <radio id="TTBProfilePathManual" 
+                     value="TTBProfilePath" label="&tagbar.optset_import_prefs;"
+                     oncommand=""/>
+			  			<hbox>
+			  				<textbox id="TTBProfilePath" value="" multiline="false" readonly="true" flex="1"/>
+			  				<button label="&tagbar.optset_import_select;" oncommand="gTTBImportManager.selectPrefJs()"/>
+			  			</hbox>
+            </row>
+          </rows>
+        </grid>
+      </radiogroup>
+ 	 		<spacer style="height:0.5em"/>
+      <label value="&tagbar.optset_import_opt;"/>
+      <hbox>
+      	<spacer style="width:1em;"/>
+      	<checkbox id="TTBImportCategories" label="&tagbar.optset_import_cat;"/>
+      </hbox>
+      <spacer style="height:0.5em"/>
+   		<hbox>
+   			<spacer flex="1"/>
+   			<button label="&tagbar.optset_import_button;" oncommand="gTTBImportManager.importTagsAndCats()"/>
+   		</hbox>
+  	</groupbox>
+  </tabpanel>
+  </tabpanels>
+  </tabbox>
+</dialog>
+

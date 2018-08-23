@@ -1,0 +1,20 @@
+<?xml-stylesheet href="chrome://messenger/skin/dialogs.css" type="text/css"?>
+<?xml-stylesheet href="chrome://tagbar/skin/tagbar.css" type="text/css"?>
+
+<!DOCTYPE dialog SYSTEM "chrome://tagbar/locale/color_picker.dtd">
+
+<dialog xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+        xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+        title="&tagbar.colorpicker.title;" buttons="cancel"
+        onload="onLoad()"
+        >
+  <script type="application/x-javascript" src="chrome://tagbar/content/colorPicker.js"/>
+  <toolbarbutton id="button_clear_color" label="&tagbar.colorpicker.not_spec;" flex="1" type="checkbox"
+  			   oncommand="gColorPicker.onChangeColorByButton(this)" color="NONE"/>
+  <spacer class="spacer" style="height:0.5em"/>
+  <toolbarbutton id="button_no_color" label="&tagbar.colorpicker.def_color;" flex="1" type="checkbox"
+  			   oncommand="gColorPicker.onChangeColorByButton(this)" color=""/>
+  <spacer class="spacer" style="height:0.5em"/>
+  <colorpicker id="colorpicker" palettename="standard" 
+    persist="palettename" onselect="gColorPicker.onChangeColorByPicker()"/>
+</dialog>
